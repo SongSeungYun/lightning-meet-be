@@ -28,3 +28,11 @@ spring:
     consumer:
       group-id: lightning-group
       auto-offset-reset: earliest
+logging:
+  level:
+    root: INFO
+    com.example.lightning_meet_be: DEBUG
+  file:
+    name: logs/app.log
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%level] %logger{36} - %msg%n"
