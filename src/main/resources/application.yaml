@@ -8,7 +8,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/lightning_meet?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: root
-    password: 1234
+    password: root
 
   jpa:
     hibernate:
@@ -36,3 +36,8 @@ logging:
     name: logs/app.log
   pattern:
     console: "%d{HH:mm:ss.SSS} [%level] %logger{36} - %msg%n"
+
+jwt:
+  secret: "3712bc3158a95b43487ffbc519c59a62a77542452305fddec85a6ea2abfa2a6a6ef1f3b7cce84c615fcbbd576439f929b01e419563582ae0641669726edcfd6e"
+  access-exp: 3600000      # 1h (ms)
+  refresh-exp: 1209600000  # 14d (ms)
