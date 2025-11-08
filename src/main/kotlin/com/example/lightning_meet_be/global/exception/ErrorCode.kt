@@ -6,7 +6,8 @@ enum class ErrorCode(
     val status: HttpStatus,
     val message: String
 ) {
-    // 인증 관련
+    // 인증 / 인가 관련
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "아이디 또는 비밀번호가 올바르지 않습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "토큰이 만료되었습니다."),
     UNAUTHORIZED_USER(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
@@ -22,7 +23,7 @@ enum class ErrorCode(
     MEETING_FULL(HttpStatus.BAD_REQUEST, "모임 인원이 가득 찼습니다."),
     DUPLICATE_PARTICIPATION(HttpStatus.CONFLICT, "이미 참여한 모임입니다."),
 
-    // 서버 공통
+    ///️ 서버 / 공통
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.")
 }
