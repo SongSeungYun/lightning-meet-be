@@ -13,10 +13,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
+        format_sql: false
 
   data:
     redis:
@@ -30,8 +30,13 @@ spring:
       auto-offset-reset: earliest
 logging:
   level:
-    root: INFO
-    com.example.lightning_meet_be: DEBUG
+    root: info
+    org.hibernate: off       # Hibernate 전체 로그 비활성화
+    org.hibernate.SQL: off
+    org.hibernate.type: off
+    org.springframework: warn  # Spring 내부 로그 최소화
+    org.springframework.web: info
+    com.example.lightning_meet_be.global.logging.RequestLoggingFilter: info
   file:
     name: logs/app.log
   pattern:

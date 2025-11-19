@@ -12,7 +12,11 @@ class WebConfig : WebMvcConfigurer {
                 "http://localhost:3000",
                 "http://localhost:5173",
                 "http://localhost:5278",
-                "http://127.0.0.1:5500"
+                "http://127.0.0.1:5500",
+                "http://localhost:8081",  // Flutter web 실행 포트
+                "http://localhost:5278",  // Flutter dev 서버 포트
+                "http://localhost:56790",  // Flutter dev 서버 포트
+
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
             .allowedHeaders("*")

@@ -53,11 +53,11 @@ class MeetingController(
         meetingService.join(principal.userId, id)
     }
 
-    @PostMapping("/{id}/cancel")
-    fun cancel(
+    @PostMapping("/{id}/leave")
+    fun leave(
         @AuthenticationPrincipal principal: JwtUserPrincipal,
         @PathVariable id: Long
-    ) = ResponseUtils.success(message = "canceled").also {
+    ) = ResponseUtils.success(message = "left").also {
         meetingService.cancelJoin(principal.userId, id)
     }
 }
