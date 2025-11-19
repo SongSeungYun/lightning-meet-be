@@ -1,7 +1,5 @@
-package com.example.lightning_meet_be.global.config
+package com.example.lightning_meet_be.global.security
 
-import com.example.lightning_meet_be.global.security.JwtAuthEntryPoint
-import com.example.lightning_meet_be.global.security.JwtAuthenticationFilter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.Customizer
