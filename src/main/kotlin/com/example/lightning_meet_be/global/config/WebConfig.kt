@@ -6,20 +6,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
 class WebConfig : WebMvcConfigurer {
-    override fun addCorsMappings(registry: CorsRegistry) {
-        registry.addMapping("/**")
-            .allowedOrigins(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "http://localhost:5278",
-                "http://127.0.0.1:5500",
-                "http://localhost:8081",  // Flutter web 실행 포트
-                "http://localhost:5278",  // Flutter dev 서버 포트
-                "http://localhost:56790",  // Flutter dev 서버 포트
-
-            )
-            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-            .allowedHeaders("*")
-            .allowCredentials(true)
-    }
+    //    override fun addCorsMappings(registry: CorsRegistry) {
+//        registry.addMapping("/**")
+//            .allowedOrigins("*")
+//            .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+//            .allowedHeaders("*")
+//            .allowCredentials(true)
+//    }
 }

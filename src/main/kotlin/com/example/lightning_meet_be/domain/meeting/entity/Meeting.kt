@@ -18,18 +18,24 @@ class Meeting(
 
     @Column(nullable = false, length = 50)
     var region: String,
+    
+    @Column(length = 100)
+    var location: String,
+
+    @Column(length = 255)
+    var keywords: String? = null,
 
     @Column(nullable = false)
     var maxParticipants: Int,
 
-    @Column(nullable = false)
+    @Column(name = "current_count", nullable = false)
     var currentParticipants: Int = 1, // host 포함
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id", nullable = false)
     val host: User,
 
-    @Column(nullable = false)
+    @Column(name = "time", nullable = false)
     val eventAt: LocalDateTime,          // 모임 시간
 
     @Column(nullable = false)

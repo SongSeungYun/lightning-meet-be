@@ -22,10 +22,12 @@ class MeetingService(
         title = m.title,
         content = m.content,
         region = m.region,
+        location = m.location,
+        keywords = m.keywords,
         maxParticipants = m.maxParticipants,
         currentParticipants = m.currentParticipants,
         hostId = m.host.id!!,
-        eventAt = m.eventAt,
+        time = m.eventAt, // The entity still uses eventAt, but DTO uses time
         createdAt = m.createdAt,
         updatedAt = m.updatedAt
     )
@@ -37,12 +39,13 @@ class MeetingService(
             title = req.title,
             content = req.content,
             region = req.region,
+            location = req.location,
+            keywords = req.keywords,
             maxParticipants = req.maxParticipants,
             host = host,
-            eventAt = req.eventAt
+            eventAt = req.time // Use time from DTO
         )
         val saved = meetingRepository.save(meeting)
-        // 생성시 호스트 자동 참여(선택): Participation을 만들고 currentParticipants는 1로 유지
         participationRepository.save(Participation(user = host, meeting = saved))
         return toResponse(saved)
     }
@@ -61,10 +64,14 @@ class MeetingService(
         val meeting = meetingRepository.findById(id).orElseThrow { CustomException(ErrorCode.MEETING_NOT_FOUND) }
         if (meeting.host.id != hostId) throw CustomException(ErrorCode.UNAUTHORIZED_USER)
 
-        meeting.title = req.title
-        meeting.content = req.content
-        meeting.region = req.region
-        meeting.maxParticipants = req.maxParticipants
+        req.title?.let { meeting.title = it }
+        req.content?.let { meeting.content = it }
+        req.region?.let { meeting.region = it }
+        req.location?.let { meeting.location = it }
+        req.keywords?.let { meeting.keywords = it }
+        req.maxParticipants?.let { meeting.maxParticipants = it }
+        // req.time is not handled yet, need to decide if eventAt should be mutable
+
         meeting.touch()
         return toResponse(meeting)
     }
@@ -73,7 +80,6 @@ class MeetingService(
     fun delete(hostId: Long, id: Long) {
         val meeting = meetingRepository.findById(id).orElseThrow { CustomException(ErrorCode.MEETING_NOT_FOUND) }
         if (meeting.host.id != hostId) throw CustomException(ErrorCode.UNAUTHORIZED_USER)
-        // 참여 기록 먼저 제거
         participationRepository.findAll().filter { it.meeting.id == id }.forEach { participationRepository.delete(it) }
         meetingRepository.delete(meeting)
     }

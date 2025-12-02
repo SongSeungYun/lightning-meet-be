@@ -6,6 +6,8 @@ data class MeetingCreateRequest(
     val title: String,
     val content: String,
     val region: String,
+    val location: String,
+    val keywords: String? = null,
     val maxParticipants: Int,
-    val eventAt: LocalDateTime
+    val time: LocalDateTime
 )

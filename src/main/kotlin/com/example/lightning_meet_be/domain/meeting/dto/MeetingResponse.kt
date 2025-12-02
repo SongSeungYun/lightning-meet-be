@@ -7,10 +7,12 @@ data class MeetingResponse(
     val title: String,
     val content: String,
     val region: String,
+    val location: String,
+    val keywords: String?,
     val maxParticipants: Int,
     val currentParticipants: Int,
     val hostId: Long,
-    val eventAt: LocalDateTime,
+    val time: LocalDateTime,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime
 )
