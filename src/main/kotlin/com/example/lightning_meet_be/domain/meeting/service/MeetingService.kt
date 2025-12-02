@@ -59,6 +59,14 @@ class MeetingService(
     fun listByRegion(region: String): List<MeetingResponse> =
         meetingRepository.findAllByRegionOrderByCreatedAtDesc(region).map(::toResponse)
 
+    fun listParticipating(userId: Long): List<MeetingResponse> {
+        val user = userRepository.findById(userId).orElseThrow { CustomException(ErrorCode.USER_NOT_FOUND) }
+        return participationRepository.findAllByUser(user)
+            .map { it.meeting }
+            .sortedByDescending { it.createdAt }
+            .map(::toResponse)
+    }
+
     @Transactional
     fun update(hostId: Long, id: Long, req: MeetingUpdateRequest): MeetingResponse {
         val meeting = meetingRepository.findById(id).orElseThrow { CustomException(ErrorCode.MEETING_NOT_FOUND) }

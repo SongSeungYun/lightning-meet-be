@@ -30,6 +30,11 @@ class MeetingController(
             else meetingService.listByRegion(region)
         )
 
+    @GetMapping("/my-participating")
+    fun listMyParticipatingMeetings(
+        @AuthenticationPrincipal principal: JwtUserPrincipal
+    ) = ResponseUtils.success(data = meetingService.listParticipating(principal.userId))
+
     @PutMapping("/{id}")
     fun update(
         @AuthenticationPrincipal principal: JwtUserPrincipal,
