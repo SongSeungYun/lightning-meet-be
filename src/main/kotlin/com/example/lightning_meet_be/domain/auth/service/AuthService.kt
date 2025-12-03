@@ -115,7 +115,9 @@ class AuthService(
             loginId = user.loginId,
             nickname = user.nickname,
             email = user.email,
-            role = user.role.name
+            role = user.role.name,
+            region = user.region,
+            interests = user.interests
         )
     }
 }

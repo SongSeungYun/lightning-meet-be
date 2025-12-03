@@ -5,5 +5,7 @@ data class MeResponse(
     val loginId: String,
     val nickname: String,
     val email: String,
-    val role: String
+    val role: String,
+    val region: String?,
+    val interests: String?
 )

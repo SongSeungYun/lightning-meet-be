@@ -5,6 +5,8 @@ import com.example.lightning_meet_be.domain.meeting.entity.Meeting
 import com.example.lightning_meet_be.domain.meeting.entity.Participation
 import com.example.lightning_meet_be.domain.meeting.repository.MeetingRepository
 import com.example.lightning_meet_be.domain.meeting.repository.ParticipationRepository
+import com.example.lightning_meet_be.domain.notification.entity.NotificationType
+import com.example.lightning_meet_be.domain.notification.service.NotificationService
 import com.example.lightning_meet_be.domain.user.repository.UserRepository
 import com.example.lightning_meet_be.global.exception.CustomException
 import com.example.lightning_meet_be.global.exception.ErrorCode
@@ -15,7 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 class MeetingService(
     private val meetingRepository: MeetingRepository,
     private val participationRepository: ParticipationRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val notificationService: NotificationService
 ) {
     private fun toResponse(m: Meeting) = MeetingResponse(
         id = m.id!!,
@@ -104,6 +107,12 @@ class MeetingService(
         participationRepository.save(Participation(user = user, meeting = meeting))
         meeting.join()
         meeting.touch()
+
+        notificationService.createNotification(
+            user = meeting.host,
+            type = NotificationType.JOIN_REQUEST,
+            message = "'${user.nickname}'님이 회원님의 모임 '${meeting.title}'에 참여했습니다."
+        )
     }
 
     @Transactional
