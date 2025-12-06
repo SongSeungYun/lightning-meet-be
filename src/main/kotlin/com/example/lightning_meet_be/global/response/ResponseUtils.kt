@@ -9,6 +9,9 @@ import org.springframework.http.ResponseEntity
  */
 object ResponseUtils {
 
+    fun success(message: String = "success"): ResponseEntity<ApiResponse<Unit>> =
+        ResponseEntity.ok(ApiResponse(success = true, message = message, data = null))
+
     fun <T> success(
         message: String = "success",
         data: T? = null,

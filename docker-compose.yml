@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/lightning_meet?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+      # JWT 환경변수
+      JWT_SECRET: 3712bc3158a95b43487ffbc519c59a62a77542452305fddec85a6ea2aabfa2a6a6ef1f3b7cce84c615fcbbd576439f929b01e419563582ae0621669726edcfd6e
+      JWT_ACCESS_EXP: 3600000
+      JWT_REFRESH_EXP: 1209600000
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+    networks:
+      - lightning-net
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    networks:
+      - lightning-net
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: lightning_meet
+    command: --default-authentication-plugin=mysql_native_password
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 15
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - lightning-net
+
+volumes:
+  mysql-data:
+
+networks:
+  lightning-net:
+    driver: bridge
