@@ -17,6 +17,7 @@ enum class ErrorCode(
     DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 사용자입니다."),
     DUPLICATE_LOGIN_ID(HttpStatus.CONFLICT, "이미 사용 중인 로그인 아이디입니다."),
     DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 사용 중인 이메일입니다."),
+    USER_REGION_NOT_SET(HttpStatus.BAD_REQUEST, "사용자 지역이 설정되지 않았습니다."),
 
     // 모임 관련
     MEETING_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 모임을 찾을 수 없습니다."),

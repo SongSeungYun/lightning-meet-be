@@ -10,8 +10,14 @@ import com.example.lightning_meet_be.domain.notification.service.NotificationSer
 import com.example.lightning_meet_be.domain.user.repository.UserRepository
 import com.example.lightning_meet_be.global.exception.CustomException
 import com.example.lightning_meet_be.global.exception.ErrorCode
+import org.springframework.cache.annotation.Cacheable
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+import java.time.Duration
 
 @Service
 class MeetingService(
@@ -56,11 +62,28 @@ class MeetingService(
     fun get(id: Long): MeetingResponse =
         toResponse(meetingRepository.findById(id).orElseThrow { CustomException(ErrorCode.MEETING_NOT_FOUND) })
 
-    fun listAll(): List<MeetingResponse> =
-        meetingRepository.findAll().sortedByDescending { it.createdAt }.map(::toResponse)
+    fun listAll(page: Int, size: Int): Page<MeetingResponse> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        return meetingRepository.findAll(pageable).map(::toResponse)
+    }
 
-    fun listByRegion(region: String): List<MeetingResponse> =
-        meetingRepository.findAllByRegionOrderByCreatedAtDesc(region).map(::toResponse)
+    fun listByRegion(region: String, page: Int, size: Int): Page<MeetingResponse> {
+        val pageable = PageRequest.of(page, size)
+        return meetingRepository.findByRegionOrderByCreatedAtDesc(region, pageable).map(::toResponse)
+    }
+
+    @Cacheable(value = ["imminentMeetings"], key = "#userId", unless = "#result.empty", cacheManager = "cacheManager")
+    fun listImminent(userId: Long): List<MeetingResponse> {
+        val user = userRepository.findById(userId).orElseThrow { CustomException(ErrorCode.USER_NOT_FOUND) }
+        val userRegion = user.region ?: throw CustomException(ErrorCode.USER_REGION_NOT_SET) // User must have a region
+
+        val now = LocalDateTime.now()
+        val threeHoursLater = now.plus(Duration.ofHours(3))
+
+        return meetingRepository.findByRegionAndEventAtBetweenOrderByEventAtAsc(userRegion, now, threeHoursLater)
+            .filter { it.currentParticipants < it.maxParticipants } // Filter out full meetings
+            .map(::toResponse)
+    }
 
     fun listParticipating(userId: Long): List<MeetingResponse> {
         val user = userRepository.findById(userId).orElseThrow { CustomException(ErrorCode.USER_NOT_FOUND) }
@@ -107,6 +130,12 @@ class MeetingService(
         participationRepository.save(Participation(user = user, meeting = meeting))
         meeting.join()
         meeting.touch()
+
+        notificationService.createNotification(
+            user = meeting.host,
+            type = NotificationType.JOIN_REQUEST,
+            message = "'${user.nickname}'님이 회원님의 모임 '${meeting.title}'에 참여했습니다."
+        )
 
         notificationService.createNotification(
             user = meeting.host,

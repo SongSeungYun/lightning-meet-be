@@ -24,16 +24,25 @@ class MeetingController(
         ResponseUtils.success(data = meetingService.get(id))
 
     @GetMapping
-    fun list(@RequestParam(required = false) region: String?) =
+    fun list(
+        @RequestParam(required = false) region: String?,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+    ) =
         ResponseUtils.success(
-            data = if (region.isNullOrBlank()) meetingService.listAll()
-            else meetingService.listByRegion(region)
+            data = if (region.isNullOrBlank()) meetingService.listAll(page, size)
+            else meetingService.listByRegion(region, page, size)
         )
 
     @GetMapping("/my-participating")
     fun listMyParticipatingMeetings(
         @AuthenticationPrincipal principal: JwtUserPrincipal
     ) = ResponseUtils.success(data = meetingService.listParticipating(principal.userId))
+
+    @GetMapping("/imminent")
+    fun listImminentMeetings(
+        @AuthenticationPrincipal principal: JwtUserPrincipal
+    ) = ResponseUtils.success(data = meetingService.listImminent(principal.userId))
 
     @PutMapping("/{id}")
     fun update(

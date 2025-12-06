@@ -4,11 +4,12 @@ server:
 spring:
   application:
     name: lightning-meet-be
+
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/lightning_meet?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://mysql:3306/lightning_meet?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: root
     password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
@@ -17,32 +18,20 @@ spring:
     properties:
       hibernate:
         format_sql: false
+        dialect: org.hibernate.dialect.MySQLDialect  # ← 추가하면 dialect 오류 방지됨
 
   data:
     redis:
-      host: localhost
+      host: ${SPRING_DATA_REDIS_HOST}
       port: 6379
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
     consumer:
       group-id: lightning-group
       auto-offset-reset: earliest
-logging:
-  level:
-    root: info
-    org.hibernate: off       # Hibernate 전체 로그 비활성화
-    org.hibernate.SQL: off
-    org.hibernate.type: off
-    org.springframework: warn  # Spring 내부 로그 최소화
-    org.springframework.web: info
-    com.example.lightning_meet_be.global.logging.RequestLoggingFilter: info
-  file:
-    name: logs/app.log
-  pattern:
-    console: "%d{HH:mm:ss.SSS} [%level] %logger{36} - %msg%n"
 
 jwt:
-  secret: "3712bc3158a95b43487ffbc519c59a62a77542452305fddec85a6ea2abfa2a6a6ef1f3b7cce84c615fcbbd576439f929b01e419563582ae0641669726edcfd6e"
-  access-exp: 3600000      # 1h (ms)
-  refresh-exp: 1209600000  # 14d (ms)
+  secret: ${JWT_SECRET:default-secret}
+  access-exp: ${JWT_ACCESS_EXP:3600000}
+  refresh-exp: ${JWT_REFRESH_EXP:1209600000}
