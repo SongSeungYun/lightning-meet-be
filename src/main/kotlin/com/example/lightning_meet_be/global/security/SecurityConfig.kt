@@ -39,6 +39,8 @@ class SecurityConfig(
     @Bean
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
         http
+            .formLogin { it.disable() }
+            .httpBasic { it.disable() }
             .csrf { it.disable() }
             .cors { it.configurationSource(corsConfigurationSource()) } // Use custom CORS configuration
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

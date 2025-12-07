@@ -5,7 +5,6 @@ plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
 	kotlin("plugin.jpa") version "1.9.25"
-	kotlin("kapt") version "1.9.25"
 
 	// Spring Boot
 	id("org.springframework.boot") version "3.5.7"
@@ -50,7 +49,8 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
 	// --- Config metadata (YAML/properties 자동완성) ---
-	kapt("org.springframework.boot:spring-boot-configuration-processor")
+	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+
 
 	// --- Dev & Test ---
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
